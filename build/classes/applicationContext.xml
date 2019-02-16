@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+	<!-- 这个用id和name一样的效果,区别是id唯一,name没有强制唯一且可以定义特殊字符,
+			但是无论用哪个都不要出现重复的 -->
+	<bean name="userDao" class="com.huju.spring.demo1.UserDaoImpl">
+		<!-- DI(依赖注入),注意,必须要有set方法才行 -->
+		<property name="name" value="张三"></property>
+	</bean>
+	
+	
+	<!-- 创建的对象默认是单例的(singleton),可以使用scope来修改
+			singleton		：默认值。单例的。
+			prototype	        ：多例的。
+			request		        ：在web项目中使用，创建一个类，保存到request域中。
+			session		        ：在web项目中使用，创建一个类，保存到session域中。
+			globalsession	：在web项目中使用，而且Prolet环境。
+		init-method 	该属性可以配置一个初始化方法,就是bean被创建的时候要去执行的方法
+		destroy-method  该属性是bean被销毁的时候要去执行的方法,前提是该bean是单例且必须关闭工厂
+	 -->
+	<bean id="productDao" class="com.huju.spring.demo2.ProductDao" scope="singleton" init-method="setup" destroy-method="tearDown">
+	
+	</bean>
+	
+	
+	<!-- Spring的实例化的三种方式 -->
+	<!-- 1.Spring通过无参构造实例化Bean -->
+	<bean id="bean1" class="com.huju.spring.demo3.Bean1"></bean>
+	<!-- 2.Spring的静态工厂实例化Bean, 因为是静态方法,所以可以直接调用 -->
+	<bean id="bean2" class="com.huju.spring.demo3.Bean2Factory" factory-method="createBean2"></bean>
+	<!-- 3.Spring的实例工厂实例化Bean,  先实例化Bean3的工厂,再通过工厂来实例化 -->
+	<bean id="bean3Factory" class="com.huju.spring.demo3.Bean3Factory"></bean>
+	<bean id="bean3" factory-bean="bean3Factory" factory-method="createBean3"></bean>
+	
+	
+	<!-- Spring的属性注入 -->
+	<bean id="car" class="com.huju.spring.demo4.Car">
+		<!-- 注意:constructor-arg是通过有参构造来赋值的,而property是通过set方法来赋值的 -->
+		<constructor-arg name="name" value="保时捷"/>
+		<constructor-arg name="price" value="1000000"/>
+	</bean>
+	<!-- set方法注入  -->
+	<bean id="car2" class="com.huju.spring.demo4.Car2">
+		<property name="name" value="宾利"></property>
+		<property name="price" value="5000000"></property>
+	</bean>
+	
+	<!-- 注入对象类型属性 -->
+	<bean id="employee" class="com.huju.spring.demo4.Employee">
+		<!-- Value属性设置的是普通类型的值,ref属性可以应用另外一个Bean的id或者name -->
+		<property name="name" value="老王"></property>
+		<property name="car2" ref="car2"></property>
+	</bean>
+	
+	<!-- Spring的集合的属性的注入 -->
+	<bean id="collectionBean" class="com.huju.spring.demo5.CollectionBean">
+		<!-- 注入数组 -->
+		<property name="arrs">
+			<list>
+				<value>aaa</value>
+				<value>bbb</value>
+				<value>ccc</value>
+			</list>
+		</property>
+		<!-- 注入list集合 -->
+		<property name="list">
+			<list>
+				<value>111</value>
+				<value>222</value>
+				<value>333</value>
+			</list>
+		</property>
+		<!-- 注入map集合 -->
+		<property name="map">
+			<map>
+				<entry key="aa" value="11"/>
+				<entry key="bb" value="22"/>
+			</map>
+		</property>
+		<!-- 注入Properties -->
+		<property name="properties">
+			<props>
+				<prop key="userName" >zhangsan</prop>
+				<prop key="passWord">123456</prop>
+			</props>
+		</property>
+	</bean>
+	
+</beans>
